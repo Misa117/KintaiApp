@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Attendance {
     private String username;
@@ -23,6 +24,11 @@ public class Attendance {
     }
 
     public String getSummary() {
-        return date + " 出勤: " + startTime + " 退勤: " + endTime;
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        String start = (startTime != null) ? startTime.format(timeFormatter) : "未打刻";
+        String end = (endTime != null) ? endTime.format(timeFormatter) : "未打刻";
+
+        return date + " 出勤: " + start + " 退勤: " + end;
     }
 }

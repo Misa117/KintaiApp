@@ -1,43 +1,41 @@
 package controller;
 
 import java.io.IOException;
-import java.util.Map;
 
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import dao.UserDAO;
 import model.User;
 
-@WebServlet("/register")
+@WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
         throws ServletException, IOException {
+        
+        request.setCharacterEncoding("UTF-8");
 
         String name = request.getParameter("name");
-        String employeeId = request.getParameter("employeeId");
+        String employeeNumber = request.getParameter("employeeNumber");  // 修正
         String password = request.getParameter("password");
 
-        ServletContext context = getServletContext();
-        Map<String, User> userMap = (Map<String, User>) context.getAttribute("userMap");
+        User user = new User();
+        user.setName(name);
+        user.setEmployeeNumber(employeeNumber);  // 修正
+        user.setPassword(password);
 
-        if (userMap == null) {
-            userMap = new java.util.HashMap<>();
-            context.setAttribute("userMap", userMap);
-        }
+        boolean success = UserDAO.registerUser(user);  // もしregisterUserに統一済みなら
 
-        if (userMap.containsKey(employeeId)) {
-            request.setAttribute("error", "この社員番号は既に登録されています。");
-            request.getRequestDispatcher("/jsp/register.jsp").forward(request, response);
+        if(success) {
+            response.sendRedirect("login.jsp");
         } else {
-            User newUser = new User(employeeId, password, name);
-            userMap.put(employeeId, newUser);
-            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+            request.setAttribute("errorMsg", "登録に失敗しました。");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 }

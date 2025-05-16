@@ -1,47 +1,40 @@
 package controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import model.Attendance;
+import dao.AttendanceDAO;
 import model.User;
 
-@WebServlet("/attendance")
 public class AttendanceServlet extends HttpServlet {
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");  // "in" または "out"
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
-            return;
+        if (user != null) {
+            int userId = user.getId();  // Userクラスにidのgetterが必要です
+            LocalDate today = LocalDate.now();
+            LocalTime now = LocalTime.now();
+
+            if ("in".equals(action)) {
+            	AttendanceDAO.markStartTime(userId);
+                session.setAttribute("record", "出勤を打刻しました: " + now.toString());
+            } else if ("out".equals(action)) {
+            	AttendanceDAO.markEndTime(userId);
+                session.setAttribute("record", "退勤を打刻しました: " + now.toString());
+            }
+        } else {
+            session.setAttribute("record", "ログインしてください");
         }
 
-        String action = request.getParameter("action");
-
-        Attendance attendance = (Attendance) session.getAttribute("attendance");
-        if (attendance == null) {
-            attendance = new Attendance(user.getName());
-            session.setAttribute("attendance", attendance);
-        }
-
-        if ("in".equals(action)) {
-            attendance.punchIn();
-        } else if ("out".equals(action)) {
-            attendance.punchOut();
-        }
-
-        session.setAttribute("record", attendance.getSummary());
-        response.sendRedirect(request.getContextPath() + "/jsp/attendance.jsp");
+        response.sendRedirect("attendance.jsp");
     }
 }

@@ -1,28 +1,45 @@
 package model;
 
 public class User {
-    private String employeeId;  // 社員番号（ログインIDとして使用）
-    private String password;    // パスワード
-    private String name;        // ユーザーの名前
+    private String name;
+    private int id;
+    private String employeeNumber; // 統一
 
-    public User(String employeeId, String password, String name) {
-        this.employeeId = employeeId;
+    private String password;
+
+    public User(String name, String employeeNumber, String password) {
+        this.name = name;
+        this.employeeNumber = employeeNumber;
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmployeeNumber() {
+        return employeeNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
 
-    // パスワード照合
-    public boolean checkPassword(String input) {
-        return this.password.equals(input);
+    public void setEmployeeNumber(String employeeNumber) {
+        this.employeeNumber = employeeNumber;
     }
 
-    // 社員番号取得
-    public String getEmployeeId() {
-        return employeeId;
+    public void setPassword(String password) {
+        this.password = password;
     }
-
-    // ユーザー名取得
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 }

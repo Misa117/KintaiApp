@@ -1,19 +1,19 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>アカウント作成</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+    <title>ユーザー登録</title>
 </head>
 <body>
-    <div class="container">
-        <h2>アカウント作成</h2>
-        <form action="<%= request.getContextPath() %>/register" method="post">
-            <input type="text" name="name" placeholder="名前" required><br>
-            <input type="text" name="employeeId" placeholder="社員番号" required><br>
-            <input type="password" name="password" placeholder="パスワード" required><br>
-            <input type="submit" value="登録">
-        </form>
-        <p class="error"><%= request.getAttribute("error") == null ? "" : request.getAttribute("error") %></p>
-    </div>
+    <h2>新規登録フォーム</h2>
+    <form action="RegisterServlet" method="post">
+        名前：<input type="text" name="name" required><br>
+        社員番号：<input type="text" name="employeeNumber" required><br>  <!-- 修正 -->
+        パスワード：<input type="password" name="password" required><br>
+        <input type="submit" value="登録">
+    </form>
+    <c:if test="${not empty errorMsg}">
+        <p style="color:red">${errorMsg}</p>
+    </c:if>
 </body>
 </html>
